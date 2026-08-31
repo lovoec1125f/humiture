@@ -1,1 +1,36 @@
+# ===== Keil MDK 编译产物（中间文件，不用提交）=====
+Objects/
+Listings/
+Debug/
+DebugConfig/
+RTE/
+*.uvoptx
+*.uvguix.*
+*.dep
+*.lnp
+*.htm
+*.map
+*.lst
+*.d
+*.o
+*.crf
+*.axf
+*.elf
+*.scvd
+JLinkLog.txt
+JLinkSettings.ini
+
+# ===== STM32CubeMX 临时/备份文件 =====
+.mxproject
+*.ioc.bak
+
+# ===== STM32CubeIDE / CMake（如果用这个 IDE 才需要）=====
+build/
+CMakeFiles/
+cmake-build-*/
+
+# ===== 通用 =====
+*.log
+Thumbs.db
+.DS_Store
 
