@@ -28,11 +28,13 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "key.h"
-#include "key_task.h"
 #include  <stdio.h>
-#include "usart_task.h"
 #include "semphr.h"
 #include "OLED.h"
+
+#include "key_task.h"
+#include "usart_task.h"
+#include "oled_task.h"
 
 /* USER CODE END Includes */
 
@@ -70,6 +72,7 @@ void SystemClock_Config(void);
 	TaskHandle_t keyhandle;
 	TaskHandle_t usart1_1handle;
 	TaskHandle_t usart1_log_handle;
+	TaskHandle_t oled_handle;
 
 	//互斥锁句柄
 	SemaphoreHandle_t usart1_mute_handle;
@@ -111,14 +114,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
  
   //可获取从机地址（仅限一个）
-  for (uint8_t addr = 1; addr < 127; addr++) {
-      if (HAL_I2C_IsDeviceReady(&hi2c1, addr, 1, 100) == HAL_OK) {
-          printf("I2C设备在地址: 0x%02X\r\n", addr);
-      }
-  }
+  //for (uint8_t addr = 1; addr < 127; addr++) {
+  //    if (HAL_I2C_IsDeviceReady(&hi2c1, addr, 1, 100) == HAL_OK) {
+  //        printf("I2C设备在地址: 0x%02X\r\n", addr);
+  //    }
+  // }
 
   OLED_Init();         // 要在MX_I2C1_Init();之后才行
-  OLED_ShowString(1,1,"a");
 
   //创建互斥锁
   usart1_mute_handle=xSemaphoreCreateMutex();
@@ -142,6 +144,12 @@ int main(void)
   	   printf("usart1_log_task任务创建失败");
          while(1);
    }
+  //oled任务
+  if ( xTaskCreate(oled_display_task,"oled",128,NULL,1,&oled_handle)!= pdPASS) {
+           // 如果创建失败，说明堆内存不够，直接停在这里
+    	   printf("oled_display_task任务创建失败");
+           while(1);
+     }
 
 
 

@@ -7,6 +7,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "usart_task.h"
+
 #include "usart.h"
 #include <stdio.h>
 #include "semphr.h"
@@ -34,6 +35,7 @@ void usart1_log_task(void* arg)
 
 	while(1)
 	{
+		//互斥信号量确保printf不能被多个任务同时调用
 		if(xSemaphoreTake(usart1_mute_handle,portMAX_DELAY)==pdPASS)
 		{
 			// 打印系统运行时间（Tick）和剩余的堆内存
