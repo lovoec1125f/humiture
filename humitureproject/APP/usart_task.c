@@ -38,8 +38,8 @@ void usart1_log_task(void* arg)
 		{
 			// 打印系统运行时间（Tick）和剩余的堆内存
 			            printf("[LOG] System alive, Tick: %lu, Free Heap: %u bytes\r\n",
-			                   (unsigned long)xTaskGetTickCount(),
-			                   (unsigned int)xPortGetFreeHeapSize());
+			                   (unsigned long)xTaskGetTickCount(),   //获取系统从启动（调用 vTaskStartScheduler()）到当前时刻，总共经过了多少个时钟节拍
+			                   (unsigned int)xPortGetFreeHeapSize());  //获取 FreeRTOS 堆管理器中当前剩余的空闲内存大小（单位：字节）
 			xSemaphoreGive(usart1_mute_handle);
 		}
 		vTaskDelay(pdMS_TO_TICKS(5000));
