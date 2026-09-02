@@ -31,6 +31,7 @@
 #include "key_task.h"
 #include  <stdio.h>
 #include "usart_task.h"
+#include "semphr.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,6 +64,14 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+	//任务句柄
+	TaskHandle_t keyhandle;
+	TaskHandle_t usart1_1handle;
+	TaskHandle_t usart1_log_handle;
+
+	//互斥锁句柄
+	SemaphoreHandle_t usart1_mute_handle;
+
 /* USER CODE END 0 */
 
 /**
@@ -73,7 +82,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	*(int *)0 = 1;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -98,20 +107,30 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  //任务句柄
-  TaskHandle_t keyhandle;
-  TaskHandle_t usart1_1handle;
 
+  //创建互斥锁
+  usart1_mute_handle=xSemaphoreCreateMutex();
+
+  //创建任务
+  //按键任务
   if (xTaskCreate(KeyTask,"key",128,NULL,1,&keyhandle)!= pdPASS) {
       // 如果创建失败，说明堆内存不够，直接停在这里
 	  printf("keytask任务创建失败");
       while(1);
   }
+  //串口打印温湿度数据
   if ( xTaskCreate(usart1_humitur_task,"usart1_1",128,NULL,1,&usart1_1handle)!= pdPASS) {
        // 如果创建失败，说明堆内存不够，直接停在这里
 	   printf("usart1_1任务创建失败");
        while(1);
    }
+  //串口日志
+  if ( xTaskCreate(usart1_log_task,"usart1_log",128,NULL,1,&usart1_log_handle)!= pdPASS) {
+         // 如果创建失败，说明堆内存不够，直接停在这里
+  	   printf("usart1_log_task任务创建失败");
+         while(1);
+   }
+
 
 
   vTaskStartScheduler();
@@ -175,6 +194,34 @@ int __io_putchar(int ch)
     HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
     return ch;
 }
+
+//内核断言
+/**
+ * @brief FreeRTOS 内核断言 (configASSERT) 说明
+ *
+ * 【什么时候触发】（通常是操作系统级的使用错误，而非普通业务逻辑错误）：
+ * 1. 传参错误：传入无效句柄（如向 xSemaphoreTake 传 NULL）。
+ * 2. 违规调用：在中断服务函数 (ISR) 里调用了阻塞型API（如 xSemaphoreTake / vTaskDelay）。
+ * 3. 优先级越界：外设中断优先级高于系统允许的上限（configMAX_SYSCALL_INTERRUPT_PRIORITY）。
+ * 4. 内核状态异常：内存被踩踏，导致内核底层队列/信号量指针损坏。
+ *
+ * 【断言内部一般干什么】：
+ * 1. 打印/记录现场：自定义实现里通过 printf 输出触发断言的 __FILE__（文件）和 __LINE__（行号）。
+ * 2. 冻结系统：调用 taskDISABLE_INTERRUPTS() 关闭中断，并进入 for(;;); 死循环。
+ * 3. 目的：强制暂停运行，防止系统在严重错误状态下继续执行导致更多数据损坏，方便开发者定位问题。
+ */
+void vAssertCalled( const char *pcFile, int line ){
+	taskDISABLE_INTERRUPTS();  // 关掉中断避免死循环时继续进中断
+	printf("\r\n[CRITICAL ERROR] FreeRTOS Assert Failed!\r\n");
+	printf("File: %s\r\n", pcFile);
+	printf("Line: %d\r\n", line);
+    printf("System Halted.\r\n");
+
+    for( ;; ); // 死循环
+
+}
+
+
 
 /* USER CODE END 4 */
 

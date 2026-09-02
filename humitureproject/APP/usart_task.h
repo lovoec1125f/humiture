@@ -8,6 +8,9 @@
 #ifndef USART_TASK_H_
 #define USART_TASK_H_
 
+
+
 void usart1_humitur_task(void* arg);
+void usart1_log_task(void* arg);
 
 #endif /* USART_TASK_H_ */

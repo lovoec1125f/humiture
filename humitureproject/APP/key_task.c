@@ -10,6 +10,7 @@ void KeyTask(void *argument)
 	uint8_t key_num;
     while(1)
     {
+
         key_num=Key_Scan();
         if(key_num==1)
         {
