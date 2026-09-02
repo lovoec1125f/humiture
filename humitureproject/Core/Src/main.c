@@ -109,6 +109,14 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+ 
+  //可获取从机地址（仅限一个）
+  for (uint8_t addr = 1; addr < 127; addr++) {
+      if (HAL_I2C_IsDeviceReady(&hi2c1, addr, 1, 100) == HAL_OK) {
+          printf("I2C设备在地址: 0x%02X\r\n", addr);
+      }
+  }
+
   OLED_Init();         // 要在MX_I2C1_Init();之后才行
   OLED_ShowString(1,1,"a");
 
