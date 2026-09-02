@@ -82,7 +82,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	*(int *)0 = 1;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

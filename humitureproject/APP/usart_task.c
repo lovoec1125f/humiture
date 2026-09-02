@@ -36,9 +36,12 @@ void usart1_log_task(void* arg)
 	{
 		if(xSemaphoreTake(usart1_mute_handle,portMAX_DELAY)==pdPASS)
 		{
-			printf("2\r\n");
+			// 打印系统运行时间（Tick）和剩余的堆内存
+			            printf("[LOG] System alive, Tick: %lu, Free Heap: %u bytes\r\n",
+			                   (unsigned long)xTaskGetTickCount(),
+			                   (unsigned int)xPortGetFreeHeapSize());
 			xSemaphoreGive(usart1_mute_handle);
 		}
-		vTaskDelay(pdMS_TO_TICKS(500));
+		vTaskDelay(pdMS_TO_TICKS(5000));
 	}
 }
