@@ -24,10 +24,13 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "key.h"
 #include "key_task.h"
+#include  <stdio.h>
+#include "usart_task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,11 +98,20 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  
-  if (xTaskCreate(KeyTask,"key",128,NULL,1,NULL)!= pdPASS) {
+  //任务句柄
+  TaskHandle_t keyhandle;
+  TaskHandle_t usart1_1handle;
+
+  if (xTaskCreate(KeyTask,"key",128,NULL,1,&keyhandle)!= pdPASS) {
       // 如果创建失败，说明堆内存不够，直接停在这里
+	  printf("keytask任务创建失败");
       while(1);
   }
+  if ( xTaskCreate(usart1_humitur_task,"usart1_1",128,NULL,1,&usart1_1handle)!= pdPASS) {
+       // 如果创建失败，说明堆内存不够，直接停在这里
+	   printf("usart1_1任务创建失败");
+       while(1);
+   }
 
 
   vTaskStartScheduler();
@@ -157,6 +169,12 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+//串口重定向
+int __io_putchar(int ch)
+{
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+    return ch;
+}
 
 /* USER CODE END 4 */
 
