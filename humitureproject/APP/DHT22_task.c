@@ -15,16 +15,27 @@ extern float humi, temp;
 
 void dht22_read_task(void *arg)
 {
+
+//	TickType_t xlastwaketime=xTaskGetTickCount();
+    uint8_t  getstate=0;
+
+//	taskENTER_CRITICAL();
+	getstate=dht22_get(&humi,&temp);
+//	taskEXIT_CRITICAL();
+
 	while(1){
 		printf("start\r\n");
+
 		//读取温湿度数据测试
-		if(dht22_get(&humi,&temp)==1)
+		if(getstate==1)
 		{
-		  printf("shidu:%f,wendu:%f\r\n",humi,temp);
+			printf("shidu:%.1f%%, wendu:%.1f°C\r\n", humi, temp);
 		}else{
 			printf("error\r\n");
 		}
-		vTaskDelay(2000);
+//		vTaskDelayUntil(&xlastwaketime,pdMS_TO_TICKS(2000));
+		vTaskDelay(pdMS_TO_TICKS(30));
+
 	}
 }
 

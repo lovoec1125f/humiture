@@ -18,6 +18,7 @@ void oled_display_task(void *arg)
 	while(1)
 	{
 		OLED_ShowString(1,1,"a");
+		vTaskDelay(pdMS_TO_TICKS(10));
 	}
 
 }

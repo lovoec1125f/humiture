@@ -159,8 +159,9 @@ int main(void)
            while(1);
      }
 
+  printf("当前剩余堆内存: %d 字节\r\n", (int)xPortGetFreeHeapSize());
   //DHT22任务
-    if ( xTaskCreate(dht22_read_task,"DHT22",128,NULL,3,&DHT22_handle)!= pdPASS) {
+    if ( xTaskCreate(dht22_read_task,"DHT22",512,NULL,3,&DHT22_handle)!= pdPASS) {
              // 如果创建失败，说明堆内存不够，直接停在这里
       	   printf("oled_display_task任务创建失败");
              while(1);

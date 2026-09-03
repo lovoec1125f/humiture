@@ -23,7 +23,7 @@ void usart1_humitur_task(void* arg)
 	while(1)
 	{
 		printf("1\r\n");
-		vTaskDelay(pdMS_TO_TICKS(1000));
+		vTaskDelay(pdMS_TO_TICKS(10));
 
 	}
 }
@@ -44,6 +44,6 @@ void usart1_log_task(void* arg)
 			                   (unsigned int)xPortGetFreeHeapSize());  //获取 FreeRTOS 堆管理器中当前剩余的空闲内存大小（单位：字节）
 			xSemaphoreGive(usart1_mute_handle);
 		}
-		vTaskDelay(pdMS_TO_TICKS(5000));
+		vTaskDelay(pdMS_TO_TICKS(50));
 	}
 }
