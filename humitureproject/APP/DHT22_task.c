@@ -16,12 +16,12 @@ extern float humi, temp;
 void dht22_read_task(void *arg)
 {
 
-//	TickType_t xlastwaketime=xTaskGetTickCount();
+	TickType_t xlastwaketime=xTaskGetTickCount();
     uint8_t  getstate=0;
 
-//	taskENTER_CRITICAL();
+	taskENTER_CRITICAL();
 	getstate=dht22_get(&humi,&temp);
-//	taskEXIT_CRITICAL();
+	taskEXIT_CRITICAL();
 
 	while(1){
 		printf("start\r\n");
@@ -33,8 +33,8 @@ void dht22_read_task(void *arg)
 		}else{
 			printf("error\r\n");
 		}
-//		vTaskDelayUntil(&xlastwaketime,pdMS_TO_TICKS(2000));
-		vTaskDelay(pdMS_TO_TICKS(30));
+		vTaskDelayUntil(&xlastwaketime,pdMS_TO_TICKS(2000));
+//		vTaskDelay(pdMS_TO_TICKS(30));
 
 	}
 }
