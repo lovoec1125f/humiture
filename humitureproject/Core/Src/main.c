@@ -37,6 +37,7 @@
 #include "key_task.h"
 #include "usart_task.h"
 #include "oled_task.h"
+#include "DHT22_task.h"
 
 /* USER CODE END Includes */
 
@@ -78,6 +79,7 @@ void SystemClock_Config(void);
 	TaskHandle_t usart1_1handle;
 	TaskHandle_t usart1_log_handle;
 	TaskHandle_t oled_handle;
+	TaskHandle_t DHT22_handle;
 
 	//互斥锁句柄
 	SemaphoreHandle_t usart1_mute_handle;
@@ -157,6 +159,14 @@ int main(void)
            while(1);
      }
 
+  //DHT22任务
+    if ( xTaskCreate(dht22_read_task,"DHT22",128,NULL,3,&DHT22_handle)!= pdPASS) {
+             // 如果创建失败，说明堆内存不够，直接停在这里
+      	   printf("oled_display_task任务创建失败");
+             while(1);
+       }
+
+
   //测试DWT延时
  // uint32_t sta=0,end=0,del=0;
  // sta=DWT->CYCCNT;
@@ -165,8 +175,7 @@ int main(void)
   //del=end-sta;
 
 
-
-  //vTaskStartScheduler();  //读取温湿度数据测试的时候关了
+  vTaskStartScheduler();  //读取温湿度数据测试的时候关了
 
   /* USER CODE END 2 */
 
@@ -176,16 +185,8 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	  //读取温湿度数据测试
-	    if(dht22_get(&humi,&temp)==1)
-	    {
-	  	  printf("shidu:%f,wendu:%f\r\n",humi,temp);
-	    }else{
-	     	printf("error");
-	    }
-
-
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }

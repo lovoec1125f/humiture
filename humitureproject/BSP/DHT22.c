@@ -8,7 +8,8 @@
 #include "main.h"
 #include "DHT22.h"
 #include "DWT.h"
-
+//#include "usart.h"
+#include <stdio.h>
 
 static  void dht22_start(void)
 {
@@ -63,14 +64,18 @@ uint8_t  dht22_get(float *humidity, float *temperature){
 	uint8_t data[5]={0};
 
 	//主机发送信号
-
+	printf("发送起始信号开始");
 	dht22_start();
+	printf("发送起始信号结束");
 
 	//检测外部信号
+	printf("开始检测传感器是否响应");
 	while(HAL_GPIO_ReadPin(DHT22_GPIO_Port, DHT22_Pin)==GPIO_PIN_SET); //主机发送了高电平，等待响应，直到有响应，否则高电平就一直循环
+	printf("检测到低电平，传感器响应");
 	while(HAL_GPIO_ReadPin(DHT22_GPIO_Port, DHT22_Pin)==GPIO_PIN_RESET);//(传感器自己拉低的，作为响应)
 	while(HAL_GPIO_ReadPin(DHT22_GPIO_Port, DHT22_Pin)==GPIO_PIN_SET); //(传感器准备发送数据的信号)
 
+	printf("传感器准备发送数据");
 	//传感器开始发送数据，主机接收数据
 	for(int i=0;i<5;i++){
 		data[i]=dht22_getbyte();
@@ -91,7 +96,7 @@ uint8_t  dht22_get(float *humidity, float *temperature){
 				rel_tem=(~rel_tem)+1;//对一个负数的补码进行“取反加一”操作，得到的结果恰好是它的绝对值（正数）
 				*temperature=-(rel_tem)/10.0;
 			}else{
-				*temperature=-(rel_tem)/10.0;
+				*temperature=(rel_tem)/10.0;
 			}
 
 			return 1;//读取成功
