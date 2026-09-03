@@ -32,6 +32,7 @@
 #include "semphr.h"
 #include "OLED.h"
 #include "DWT.h"
+#include "DHT22.h"
 
 #include "key_task.h"
 #include "usart_task.h"
@@ -69,6 +70,9 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+	//温湿度数据
+     float humi, temp;
+
 	//任务句柄
 	TaskHandle_t keyhandle;
 	TaskHandle_t usart1_1handle;
@@ -88,6 +92,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+
 
   /* USER CODE END 1 */
 
@@ -159,7 +164,9 @@ int main(void)
   //end=DWT->CYCCNT;
   //del=end-sta;
 
-  vTaskStartScheduler();
+
+
+  //vTaskStartScheduler();  //读取温湿度数据测试的时候关了
 
   /* USER CODE END 2 */
 
@@ -168,6 +175,15 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+	  //读取温湿度数据测试
+	    if(dht22_get(&humi,&temp)==1)
+	    {
+	  	  printf("shidu:%f,wendu:%f\r\n",humi,temp);
+	    }else{
+	     	printf("error");
+	    }
+
 
     /* USER CODE BEGIN 3 */
   }
