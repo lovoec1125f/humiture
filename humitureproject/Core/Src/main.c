@@ -31,6 +31,7 @@
 #include  <stdio.h>
 #include "semphr.h"
 #include "OLED.h"
+#include "DWT.h"
 
 #include "key_task.h"
 #include "usart_task.h"
@@ -104,7 +105,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  dwt_init();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -151,7 +152,12 @@ int main(void)
            while(1);
      }
 
-
+  //测试DWT延时
+ // uint32_t sta=0,end=0,del=0;
+ // sta=DWT->CYCCNT;
+  //dwt_delay_us(1000);
+  //end=DWT->CYCCNT;
+  //del=end-sta;
 
   vTaskStartScheduler();
 
