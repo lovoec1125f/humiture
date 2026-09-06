@@ -91,7 +91,7 @@ extern TaskHandle_t usart1_1handle;
 extern TaskHandle_t usart1_log_handle;
 extern TaskHandle_t oled_handle;
 extern TaskHandle_t DHT22_handle;
-
+extern 	TaskHandle_t LED_handle;
 //互斥锁句柄
 extern SemaphoreHandle_t usart1_mute_handle;
 //二值信号量

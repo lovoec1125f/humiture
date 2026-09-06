@@ -39,6 +39,7 @@
 #include "usart_task.h"
 #include "oled_task.h"
 #include "DHT22_task.h"
+#include "outlimit_task.h"
 
 /* USER CODE END Includes */
 
@@ -82,6 +83,7 @@ void SystemClock_Config(void);
 	TaskHandle_t usart1_log_handle;
 	TaskHandle_t oled_handle;
 	TaskHandle_t DHT22_handle;
+	TaskHandle_t LED_handle;
 
 	//互斥锁句柄
 	SemaphoreHandle_t usart1_mute_handle;
@@ -187,14 +189,18 @@ int main(void)
     	   printf("oled_display_task任务创建失败");
            while(1);
      }
-
-
   //DHT22任务
     if ( xTaskCreate(dht22_read_task,"DHT22",512,NULL,3,&DHT22_handle)!= pdPASS) {
              // 如果创建失败，说明堆内存不够，直接停在这里
       	   printf("oled_display_task任务创建失败");
              while(1);
        }
+    //创建超限任务，这个是闪烁led
+    if (xTaskCreate(led_task,"led",128,NULL,1,&LED_handle)!= pdPASS) {
+          // 如果创建失败，说明堆内存不够，直接停在这里
+    	  printf("ledtask任务创建失败");
+          while(1);
+      }
 
     //printf("当前剩余堆内存: %d 字节\r\n", (int)xPortGetFreeHeapSize());
 

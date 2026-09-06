@@ -24,9 +24,9 @@ void usart1_humitur_task(void* arg)
 	while(1)
 	{
 		// 推荐写法（保留1位小数）
-		printf("shidu:%d.%d%%, wendu:%d.%d°C\r\n", data.humi_zheng, data.humi_xiao,data.temp_zheng,data.temp_xiao);
+		printf("shidu:%d.%d%%\r\nwendu:%d.%d°C\r\n", data.humi_zheng, data.humi_xiao,data.temp_zheng,data.temp_xiao);
 		//printf("1\r\n");
-		vTaskDelay(pdMS_TO_TICKS(1000));
+		vTaskDelay(pdMS_TO_TICKS(500));
 
 	}
 }
@@ -39,14 +39,14 @@ void usart1_log_task(void* arg)
 	while(1)
 	{
 		//互斥信号量确保printf不能被多个任务同时调用
-		//if(xSemaphoreTake(usart1_mute_handle,portMAX_DELAY)==pdPASS)
-		//{
-			// 打印系统运行时间（Tick）和剩余的堆内存
-			           // printf("[LOG] System alive, Tick: %lu, Free Heap: %u bytes\r\n",
-			           //        (unsigned long)xTaskGetTickCount(),   //获取系统从启动（调用 vTaskStartScheduler()）到当前时刻，总共经过了多少个时钟节拍
-			           //       (unsigned int)xPortGetFreeHeapSize());  //获取 FreeRTOS 堆管理器中当前剩余的空闲内存大小（单位：字节）
-		//	xSemaphoreGive(usart1_mute_handle);
-		//}
-		//vTaskDelay(pdMS_TO_TICKS(500));
+		if(xSemaphoreTake(usart1_mute_handle,portMAX_DELAY)==pdPASS)
+		{
+			 //打印系统运行时间（Tick）和剩余的堆内存
+			            printf("[LOG] System alive, Tick: %lu, Free Heap: %u bytes\r\n",
+			                   (unsigned long)xTaskGetTickCount(),   //获取系统从启动（调用 vTaskStartScheduler()）到当前时刻，总共经过了多少个时钟节拍
+			                  (unsigned int)xPortGetFreeHeapSize());  //获取 FreeRTOS 堆管理器中当前剩余的空闲内存大小（单位：字节）
+			xSemaphoreGive(usart1_mute_handle);
+		}
+		vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 }

@@ -11,8 +11,8 @@
 #include "DHT22.h"
 #include <stdio.h>
 #include "queue.h"
-
 #include "semphr.h"
+
 
 extern ht_data data;
 
@@ -29,6 +29,8 @@ void dht22_read_task(void *arg)
 		taskEXIT_CRITICAL();
 
 
+
+
 		//读取温湿度数据测试
 		if(getstate==1) //读取数据成功
 		{
@@ -39,14 +41,21 @@ void dht22_read_task(void *arg)
 			{
 				printf("队列满了，数据丢失\r\n");
 			}
-			if(xSemaphoreGive(erzhi_t)!=pdPASS)  //二值信号量传给led
+			if((data.humi_zheng>=65)||(data.temp_zheng>=40)||(data.temp_zheng<=10))  //超限任务，二值信号量传
 			{
-				printf("二值信号量给失败\r\n");
+				if(xSemaphoreGive(erzhi_t)!=pdTRUE)
+				{
+					printf("二值信号量give失败\r\n");
+				}
+				else
+				{
+					printf("二值信号量give成功\r\n");
+				}
 			}
 		}else{
 			printf("error\r\n");
 		}
-		vTaskDelayUntil(&xlastwaketime,pdMS_TO_TICKS(2000));
+		vTaskDelayUntil(&xlastwaketime,pdMS_TO_TICKS(1000));
 //		vTaskDelay(pdMS_TO_TICKS(30));
 
 	}

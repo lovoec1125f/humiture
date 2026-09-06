@@ -15,7 +15,7 @@ void KeyTask(void *argument)
         key_num=Key_Scan();
         if(key_num==1)
         {
-            HAL_GPIO_TogglePin (LED_GPIO_Port, LED_Pin);
+            //HAL_GPIO_TogglePin (LED_GPIO_Port, LED_Pin);
         }
         vTaskDelay(10);
         //vTaskDelay(500);
