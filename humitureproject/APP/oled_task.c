@@ -26,14 +26,17 @@ void oled_display_task(void *arg)
 		xQueueReceive(Queue_humiture_handle,rebuf,portMAX_DELAY);
 
 
+		OLED_ShowString(1,1,"shidu:");
+		OLED_ShowNum(1,7,rebuf[0],2);
+		OLED_ShowChar(1, 10, '.');
+		OLED_ShowNum(1,11,rebuf[1],2);
+		OLED_ShowString(1,13,"%");
 
-		OLED_ShowNum(1,1,rebuf[0],2);
-		OLED_ShowChar(1, 3, '.');
-		OLED_ShowNum(1,4,rebuf[1],2);
-
-		OLED_ShowNum(2,1,rebuf[2],2);
-		OLED_ShowChar(2, 3, '.');
-		OLED_ShowNum(2,4,rebuf[3],2);
+		OLED_ShowString(2,1,"wendu:");
+		OLED_ShowNum(2,7,rebuf[2],2);
+		OLED_ShowChar(2, 10, '.');
+		OLED_ShowNum(2,11,rebuf[3],2);
+		OLED_ShowString(2,13,"C");
 
 		vTaskDelay(pdMS_TO_TICKS(10));
 	}
