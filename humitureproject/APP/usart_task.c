@@ -32,7 +32,7 @@ void usart1_humitur_task(void* arg)
 			}
 
 		}
-	vTaskDelay(pdMS_TO_TICKS(500));
+	vTaskDelay(pdMS_TO_TICKS(2000));
 
 	/* 推荐写法（保留1位小数）
 		printf("shidu:%d.%d%%\r\nwendu:%d.%d°C\r\n", data.humi_zheng, data.humi_xiao,data.temp_zheng,data.temp_xiao);

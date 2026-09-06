@@ -38,7 +38,7 @@ void oled_display_task(void *arg)
 		OLED_ShowNum(2,11,rebuf.temp_xiao,2);
 		OLED_ShowString(2,13,"C");
 
-		vTaskDelay(pdMS_TO_TICKS(10));
+		vTaskDelay(pdMS_TO_TICKS(2000));
 	}
 
 }

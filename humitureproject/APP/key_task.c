@@ -17,7 +17,7 @@ void KeyTask(void *argument)
         {
             //HAL_GPIO_TogglePin (LED_GPIO_Port, LED_Pin);
         }
-        vTaskDelay(10);
+        vTaskDelay(1000);
         //vTaskDelay(500);
     }
 }
