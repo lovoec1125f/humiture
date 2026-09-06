@@ -62,21 +62,8 @@
 目录结构
 --------
 
-| 路径 | 说明 |
-|------|------|
-| BSP/DHT22.c | DHT22 单总线驱动 |
-| BSP/OLED.c | SSD1306 驱动（HAL 硬件 I2C） |
-| BSP/OLED_Font.h | 8x16 字库 |
-| BSP/key.c | 按键扫描 |
-| APP/DHT22_task.c | 采集任务 |
-| APP/oled_task.c | 显示任务 |
-| APP/usart_task.c | 串口任务（数据 + 日志） |
-| APP/outlimit_task.c | 报警任务 |
-| APP/key_task.c | 按键任务 |
-| Core/Inc/main.h | 数据结构 + 全局句柄 |
-| Core/Src/main.c | 任务创建 + printf 重定向 |
-| Core/Src/stm32f1xx_hal_timebase_tim.c | HAL 时基切到 TIM4 |
-| Middlewares/FreeRTOS/ | FreeRTOS 内核（手动移植） |
+<img width="765" height="609" alt="image" src="https://github.com/user-attachments/assets/38d3beaf-7af4-4177-9095-5f51f1761140" />
+
 
 
 
