@@ -31,6 +31,9 @@ void dht22_read_task(void *arg)
 		//读取温湿度数据测试
 		if(getstate==1) //读取数据成功
 		{
+			// 推荐写法（保留1位小数）
+			printf("shidu:%.1f%%, wendu:%.1f°C\r\n", data.humi, data.temp);
+
 			if(xQueueSend(Queue_humiture_handle,&data,0)!=pdPASS)  //消息队列传给串口和oled
 			{
 				printf("队列满了，数据丢失\r\n");

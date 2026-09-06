@@ -92,10 +92,10 @@ extern TaskHandle_t DHT22_handle;
 extern SemaphoreHandle_t usart1_mute_handle;
 //二值信号量
 extern SemaphoreHandle_t erzhi_t;
-
-
 //消息队列句柄
 extern QueueHandle_t  Queue_humiture_handle;
+
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
