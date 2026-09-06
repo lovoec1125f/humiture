@@ -61,10 +61,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LED_Pin GPIO_PIN_13
-#define LED_GPIO_Port GPIOC
 #define key_Pin GPIO_PIN_0
 #define key_GPIO_Port GPIOA
+#define LED_Pin GPIO_PIN_1
+#define LED_GPIO_Port GPIOA
 #define beek_Pin GPIO_PIN_0
 #define beek_GPIO_Port GPIOB
 #define DHT22_Pin GPIO_PIN_12
