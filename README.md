@@ -61,7 +61,29 @@
 
 
 
-<img width="765" height="609" alt="image" src="https://github.com/user-attachments/assets/38d3beaf-7af4-4177-9095-5f51f1761140" />
+```plaintext
+humitureproject/
+├── BSP/    # 底层驱动（与 RTOS 无关）
+│   ├── DHT22.c / DHT22.h    # DHT22 单总线驱动
+│   ├── OLED.c / OLED.h    # SSD1306 驱动（HAL 硬件 I2C）
+│   ├── OLED_Font.h    # 8x16 字库
+│   └── key.c / key.h    # 按键扫描
+├── APP/    # 应用任务（RTOS 相关）
+│   ├── DHT22_task.c    # 采集任务
+│   ├── oled_task.c    # 显示任务
+│   ├── usart_task.c    # 串口任务（数据 + 日志）
+│   ├── outlimit_task.c    # 报警任务
+│   └── key_task.c    # 按键任务
+└── Core/    # STM32CubeIDE 生成（HAL）
+    ├── Inc/
+    │   └── main.h    # 数据结构 + 全局句柄
+    ├── Src/
+    │   ├── main.c    # 任务创建 + printf 重定向
+    │   └── stm32f1xx_hal_timebase_tim.c    # HAL 时基切到 TIM4
+    └── Middlewares/
+        └── FreeRTOS/    # FreeRTOS 内核（手动移植）
+            └── ...（具体文件省略）
+```
 
 
 
