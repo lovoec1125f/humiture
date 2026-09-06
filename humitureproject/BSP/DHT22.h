@@ -8,6 +8,6 @@
 #ifndef DHT22_H_
 #define DHT22_H_
 
-uint8_t  dht22_get(float *humidity, float *temperature);
+uint8_t dht22_get(ht_data *shuju);
 
 #endif /* DHT22_H_ */

@@ -58,12 +58,13 @@ static uint8_t dht22_getbyte(void)
 }
 
 // 主机读取整个数据
-uint8_t dht22_get(float *humidity, float *temperature)
+//8位整数相对湿度数据+8位小数相对湿度数据+8位整数温度数据+8位小数温度数据+8位校验和
+uint8_t dht22_get(ht_data *shuju)
 {
     uint8_t data[5] = {0};
     uint32_t start = 0;
 
-    // 1. 主机发送起始信号
+    // 1. 主机发送起始信号D
     dht22_start();
 
     // 2. 检测外部响应信号（全部加超时！）
@@ -92,17 +93,35 @@ uint8_t dht22_get(float *humidity, float *temperature)
 
     // 4. 校验数据
     if ((uint8_t)(data[0] + data[1] + data[2] + data[3]) == data[4]) {
+
+
         uint16_t rel_hum = (data[0] << 8) | data[1];
         uint16_t rel_tem = (data[2] << 8) | data[3];
 
-        *humidity = rel_hum / 10.0;
+        //只记录整数了，不转换成浮点数
+	    // 湿度拆分
+		shuju->humi_zheng = rel_hum / 10;
+		shuju->humi_xiao = rel_hum % 10;
 
-        if (rel_tem & 0x8000) { // 负温度处理
-            rel_tem = (~rel_tem) + 1;
-            *temperature = -((float)rel_tem) / 10.0;
-        } else {
-            *temperature = (float)rel_tem / 10.0;
-        }
+		// 温度拆分（处理负数）
+		if (rel_tem & 0x8000) {
+			rel_tem = (~rel_tem) + 1; // 取反加一得到绝对值
+			shuju->temp_zheng = - (rel_tem / 10); // 整数部分带负号
+			shuju->temp_xiao = rel_tem % 10;
+		} else {
+			shuju->temp_zheng = rel_tem / 10;
+			shuju->temp_xiao = rel_tem % 10;
+		}
+
+
+		//这部分转换成浮点数，不好用
+		/* *humidity = rel_hum / 10.0;
+		if (rel_tem & 0x8000) { // 负温度处理
+			rel_tem = (~rel_tem) + 1;
+		 	 *temperature = -((float)rel_tem) / 10.0;
+		} else {
+		 	 *temperature = (float)rel_tem / 10.0;
+		}*/
         return 1; // 成功
     }
 

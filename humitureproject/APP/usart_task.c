@@ -23,8 +23,10 @@ void usart1_humitur_task(void* arg)
 
 	while(1)
 	{
+		// 推荐写法（保留1位小数）
+		printf("shidu:%d.%d%%, wendu:%d.%d°C\r\n", data.humi_zheng, data.humi_xiao,data.temp_zheng,data.temp_xiao);
 		//printf("1\r\n");
-		vTaskDelay(pdMS_TO_TICKS(10));
+		vTaskDelay(pdMS_TO_TICKS(1000));
 
 	}
 }

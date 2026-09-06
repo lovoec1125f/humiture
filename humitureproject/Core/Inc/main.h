@@ -71,9 +71,13 @@ void Error_Handler(void);
 #define DHT22_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+
+//温湿度的整数小数
 typedef struct humiture_data{
-	float humi;
-	float temp;
+	uint8_t humi_zheng;  //湿度
+	uint8_t humi_xiao;
+	uint8_t temp_zheng;  //温度
+	uint8_t temp_xiao;
 }ht_data;
 
 
