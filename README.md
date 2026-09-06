@@ -18,7 +18,7 @@
 | 温湿度传感器 | DHT22 / AM2302 | 单总线 |
 | 显示屏 | OLED SSD1306 | 0.96 寸，I2C |
 | USB 转串口 | CH340 | 串口调试 |
-| LED / 蜂鸣器 | — | 报警（蜂鸣器引脚已预留） |
+| LED  | — | 报警 |
 
 **接线表：**
 
@@ -27,8 +27,7 @@
 | DHT22 DATA | PB12 | 开漏输出 + 上拉 |
 | OLED SCL / SDA | PB6 / PB7 | I2C1，100kHz |
 | LED | PA1 | 超限闪烁 |
-| 蜂鸣器 | PB0 | 预留 |
-| 按键 | PA0 | 预留 |
+
 
 ## 🏗️ 系统架构
 
@@ -41,24 +40,18 @@
 | usart1_humitur_task | 1 | 128 | 串口打印温湿度 | 队列收数据 + 互斥锁 |
 | usart1_log_task | 1 | 128 | 串口系统日志 | 互斥锁 |
 | led_task | 1 | 128 | 超限 LED 报警 | 二值信号量 |
-| KeyTask | 1 | 128 | 按键扫描（预留） | — |
 
-> 优先级原则：时序敏感的采集任务给最高优先级（3）；显示 / 打印 / 报警都是"人速"任务，给低优先级（1）即可。
 
-### 数据流
 
-              ┌──────────────┐
-              │ dht22_read   │  优先级 3（时序敏感，临界区保护）
-              └──────┬───────┘
-                     │  消息队列 Queue_humiture_handle
-        ┌────────────┼──────────────┐
-        ▼            ▼              │
-  ┌───────────┐ ┌────────────┐      │ 二值信号量 erzhi_t（超限时）
-  │ oled 显示  │ │ 串口打印     │      │
-  └───────────┘ └────────────┘      ▼
-                               ┌───────────┐
-                               │ led 报警   │
-                               └───────────┘
+数据流
+--------
+
+| 谁发给谁 | 用什么 |
+|----------|--------|
+| 采集任务 → OLED / 串口 | 消息队列（传数据） |
+| 采集任务 → LED 报警 | 二值信号量（传通知） |
+| 两个串口任务 → UART | 互斥锁（防打架） |
+
 
 - **队列**传数据（温湿度值）
 - **二值信号量**传通知（超限了）
@@ -66,23 +59,25 @@
 
 ## 📁 目录结构
 
-humitureproject/
-├── BSP/                         # 底层驱动（与 RTOS 无关）
-│   ├── DHT22.c / DHT22.h        # DHT22 单总线驱动
-│   ├── OLED.c / OLED.h          # SSD1306 驱动（HAL 硬件 I2C）
-│   ├── OLED_Font.h              # 8x16 字库
-│   └── key.c / key.h            # 按键扫描
-├── APP/                         # 应用任务（RTOS 相关）
-│   ├── DHT22_task.c             # 采集任务
-│   ├── oled_task.c              # 显示任务
-│   ├── usart_task.c             # 串口任务（数据 + 日志）
-│   ├── outlimit_task.c          # 报警任务
-│   └── key_task.c               # 按键任务
-├── Core/                        # STM32CubeIDE 生成（HAL）
-│   ├── Inc/main.h               # 数据结构 + 全局句柄
-│   ├── Src/main.c               # 任务创建 + printf 重定向
-│   └── Src/stm32f1xx_hal_timebase_tim.c  # HAL 时基切到 TIM4
-└── Middlewares/FreeRTOS/        # FreeRTOS 内核（手动移植）
+目录结构
+--------
+
+| 路径 | 说明 |
+|------|------|
+| BSP/DHT22.c | DHT22 单总线驱动 |
+| BSP/OLED.c | SSD1306 驱动（HAL 硬件 I2C） |
+| BSP/OLED_Font.h | 8x16 字库 |
+| BSP/key.c | 按键扫描 |
+| APP/DHT22_task.c | 采集任务 |
+| APP/oled_task.c | 显示任务 |
+| APP/usart_task.c | 串口任务（数据 + 日志） |
+| APP/outlimit_task.c | 报警任务 |
+| APP/key_task.c | 按键任务 |
+| Core/Inc/main.h | 数据结构 + 全局句柄 |
+| Core/Src/main.c | 任务创建 + printf 重定向 |
+| Core/Src/stm32f1xx_hal_timebase_tim.c | HAL 时基切到 TIM4 |
+| Middlewares/FreeRTOS/ | FreeRTOS 内核（手动移植） |
+
 
 
 
