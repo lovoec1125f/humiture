@@ -11,6 +11,7 @@
 #include "usart.h"
 #include <stdio.h>
 #include "semphr.h"
+#include "queue.h"
 
 extern SemaphoreHandle_t usart1_mute_handle;
 

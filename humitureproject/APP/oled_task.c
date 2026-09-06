@@ -7,6 +7,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "oled_task.h"
+#include "semphr.h"
+#include "queue.h"
 
 #include "OLED.h"
 

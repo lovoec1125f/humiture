@@ -10,8 +10,10 @@
 #include "task.h"
 #include "DHT22.h"
 #include <stdio.h>
+#include "queue.h"
 
-extern float humi, temp;
+#include "semphr.h"
+
 
 void dht22_read_task(void *arg)
 {
@@ -19,17 +21,24 @@ void dht22_read_task(void *arg)
 	TickType_t xlastwaketime=xTaskGetTickCount();
     uint8_t  getstate=0;
 
-	taskENTER_CRITICAL();
-	getstate=dht22_get(&humi,&temp);
-	taskEXIT_CRITICAL();
-
 	while(1){
-		printf("start\r\n");
+
+		taskENTER_CRITICAL();
+		getstate=dht22_get(&data.humi,&data.temp);  //读取数据，返回值1表示读取成功
+		taskEXIT_CRITICAL();
+
 
 		//读取温湿度数据测试
-		if(getstate==1)
+		if(getstate==1) //读取数据成功
 		{
-			printf("shidu:%.1f%%, wendu:%.1f°C\r\n", humi, temp);
+			if(xQueueSend(Queue_humiture_handle,&data,0)!=pdPASS)  //消息队列传给串口和oled
+			{
+				printf("队列满了，数据丢失\r\n");
+			}
+			if(xSemaphoreGive(erzhi_t)!=pdPASS)  //二值信号量传给led
+			{
+				printf("二值信号量给失败\r\n");
+			}
 		}else{
 			printf("error\r\n");
 		}

@@ -3,6 +3,7 @@
 #include "task.h"
 #include "key.h"
 #include "key_task.h"
+#include "queue.h"
 
 void KeyTask(void *argument)
 {

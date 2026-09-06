@@ -27,9 +27,10 @@
 #include <stdio.h>
 #include "FreeRTOS.h"
 #include "task.h"
-#include "key.h"
-#include  <stdio.h>
+#include "queue.h"
 #include "semphr.h"
+
+#include "key.h"
 #include "OLED.h"
 #include "DWT.h"
 #include "DHT22.h"
@@ -72,7 +73,8 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 	//温湿度数据
-     float humi, temp;
+     //float humi, temp;
+	ht_data data;
 
 	//任务句柄
 	TaskHandle_t keyhandle;
@@ -83,6 +85,13 @@ void SystemClock_Config(void);
 
 	//互斥锁句柄
 	SemaphoreHandle_t usart1_mute_handle;
+	//二值信号量
+	SemaphoreHandle_t erzhi_t;
+
+
+	//消息队列句柄
+	QueueHandle_t  Queue_humiture_handle;
+
 
 /* USER CODE END 0 */
 
@@ -121,6 +130,8 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
  
+
+
   //可获取从机地址（仅限一个）
   //for (uint8_t addr = 1; addr < 127; addr++) {
   //    if (HAL_I2C_IsDeviceReady(&hi2c1, addr, 1, 100) == HAL_OK) {
@@ -132,6 +143,24 @@ int main(void)
 
   //创建互斥锁
   usart1_mute_handle=xSemaphoreCreateMutex();
+
+  //创建二值信号量
+  erzhi_t=xSemaphoreCreateBinary();
+  if( erzhi_t == NULL )
+     {
+         printf("erzhi_t创建失败");
+			while(1);
+     }
+  //创建消息队列
+  Queue_humiture_handle = xQueueCreate( 2, sizeof(  ht_data ) );
+	if( Queue_humiture_handle == NULL )
+	{
+		// Queue was not created and must not be used.
+	printf("Queue_humiture_handle创建失败");
+	while(1);
+	}
+
+
 
   //创建任务
   //按键任务
@@ -159,13 +188,16 @@ int main(void)
            while(1);
      }
 
-  printf("当前剩余堆内存: %d 字节\r\n", (int)xPortGetFreeHeapSize());
+
   //DHT22任务
     if ( xTaskCreate(dht22_read_task,"DHT22",512,NULL,3,&DHT22_handle)!= pdPASS) {
              // 如果创建失败，说明堆内存不够，直接停在这里
       	   printf("oled_display_task任务创建失败");
              while(1);
        }
+
+    //printf("当前剩余堆内存: %d 字节\r\n", (int)xPortGetFreeHeapSize());
+
 
 
   //测试DWT延时
@@ -176,7 +208,7 @@ int main(void)
   //del=end-sta;
 
 
-  vTaskStartScheduler();  //读取温湿度数据测试的时候关了
+  vTaskStartScheduler();
 
   /* USER CODE END 2 */
 

@@ -31,7 +31,11 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -67,7 +71,31 @@ void Error_Handler(void);
 #define DHT22_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+typedef struct humiture_data{
+	float humi;
+	float temp;
+}ht_data;
 
+
+//温湿度数据
+ //float humi, temp;
+extern ht_data data;
+
+//任务句柄
+extern TaskHandle_t keyhandle;
+extern TaskHandle_t usart1_1handle;
+extern TaskHandle_t usart1_log_handle;
+extern TaskHandle_t oled_handle;
+extern TaskHandle_t DHT22_handle;
+
+//互斥锁句柄
+extern SemaphoreHandle_t usart1_mute_handle;
+//二值信号量
+extern SemaphoreHandle_t erzhi_t;
+
+
+//消息队列句柄
+extern QueueHandle_t  Queue_humiture_handle;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
