@@ -28,14 +28,9 @@ void dht22_read_task(void *arg)
 		getstate=dht22_get(&data);  //读取数据，返回值1表示读取成功
 		taskEXIT_CRITICAL();
 
-
-
-
 		//读取温湿度数据测试
 		if(getstate==1) //读取数据成功
 		{
-			// 推荐写法（保留1位小数）
-			//printf("shidu:%.1f%%, wendu:%.1f°C\r\n", data.humi, data.temp);
 
 			if(xQueueSend(Queue_humiture_handle,&data,0)!=pdPASS)  //消息队列传给串口和oled
 			{
@@ -47,15 +42,11 @@ void dht22_read_task(void *arg)
 				{
 					printf("二值信号量give失败\r\n");
 				}
-				else
-				{
-					printf("二值信号量give成功\r\n");
-				}
 			}
 		}else{
 			printf("error\r\n");
 		}
-		vTaskDelayUntil(&xlastwaketime,pdMS_TO_TICKS(1000));
+		vTaskDelayUntil(&xlastwaketime,pdMS_TO_TICKS(2000));
 //		vTaskDelay(pdMS_TO_TICKS(30));
 
 	}

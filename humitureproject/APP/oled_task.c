@@ -18,24 +18,24 @@
 void oled_display_task(void *arg)
 {
 
-	uint8_t rebuf[4]={0};
+	ht_data rebuf;
 
 
 	while(1)
 	{
-		xQueueReceive(Queue_humiture_handle,rebuf,portMAX_DELAY);
+		xQueueReceive(Queue_humiture_handle,&rebuf,portMAX_DELAY);
 
 
 		OLED_ShowString(1,1,"shidu:");
-		OLED_ShowNum(1,7,rebuf[0],2);
+		OLED_ShowNum(1,7,rebuf.humi_zheng,2);
 		OLED_ShowChar(1, 10, '.');
-		OLED_ShowNum(1,11,rebuf[1],2);
+		OLED_ShowNum(1,11,rebuf.humi_xiao,2);
 		OLED_ShowString(1,13,"%");
 
 		OLED_ShowString(2,1,"wendu:");
-		OLED_ShowNum(2,7,rebuf[2],2);
+		OLED_ShowNum(2,7,rebuf.temp_zheng,2);
 		OLED_ShowChar(2, 10, '.');
-		OLED_ShowNum(2,11,rebuf[3],2);
+		OLED_ShowNum(2,11,rebuf.temp_xiao,2);
 		OLED_ShowString(2,13,"C");
 
 		vTaskDelay(pdMS_TO_TICKS(10));
